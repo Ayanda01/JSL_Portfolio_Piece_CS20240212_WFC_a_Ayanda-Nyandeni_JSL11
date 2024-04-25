@@ -2,9 +2,12 @@
 import {getTasks,createNewTask,patchTask,putTask,deleteTask} from "./utils/taskFunctions.js";
 import { initialData } from "./initialData.js";
 
+/*************************************************************************************************************************************************
+ * FIX BUGS!!!
+ * **********************************************************************************************************************************************/
+
 // Function checks if local storage already has data, if not it loads initialData to localStorage
 //Function 1
-//I found no bugs on this function
 function initializeData() {
   if (!localStorage.getItem("tasks")) {
     localStorage.setItem("tasks", JSON.stringify(initialData));
@@ -14,6 +17,7 @@ function initializeData() {
   }
 }
 
+// TASK: Get elements from the DOM
 const elements = {
   // Navigation Sidebar elements
   sideBar: document.querySelector(".side-bar"),
@@ -54,6 +58,8 @@ const elements = {
   saveTaskChangesBtn: document.getElementById("save-task-changes-btn"),
   cancelEditBtn: document.getElementById("cancel-edit-btn"),
   deleteTaskBtn: document.getElementById("delete-task-btn"),
+
+  // Filter
   filterDiv: document.getElementById("filterDiv"),
 };
 
@@ -61,7 +67,6 @@ let activeBoard = "";
 
 // Extracts unique board names from tasks
 //Function 2
-//I found one bug here related to the ternary operator
 //Bug: replace semicolon ; with a colon : this stops ternary operator logic
 function fetchAndDisplayBoardsAndTasks() {
   const tasks = getTasks();
@@ -78,8 +83,6 @@ function fetchAndDisplayBoardsAndTasks() {
 
 // Creates different boards in the DOM
 //Function 3
-//Another function fact that the event listener is not correctly implemented since click() is used instead of ‘click’ it is incorrect because click is not a method
-//The error here was related to the fact that the click event listener is not correctly implemented since the addEventlistener DOM method is not used 
 //Bug: the click event listener was not correctly implemented
 function displayBoards(boards) {
   const boardsContainer = document.getElementById("boards-nav-links-div");
@@ -112,6 +115,7 @@ function filterAndDisplayTasksByBoard(boardName) {
 
   elements.columnDivs.forEach((column) => {
     const status = column.getAttribute("data-status");
+    // Reset column content while preserving the column title
     column.innerHTML = `<div class="column-head-div">
                           <span class="dot" id="${status}-dot"></span>
                           <h4 class="columnHeader">${status.toUpperCase()}</h4>
@@ -129,7 +133,9 @@ function filterAndDisplayTasksByBoard(boardName) {
         taskElement.textContent = task.title;
         taskElement.setAttribute("data-task-id", task.id);
 
+        // Listen for a click event on each task and open a modal
         taskElement.addEventListener("click", () => {
+          // Use 'addEventListener' instead of 'click' and remove '=>' arrow function
           openEditTaskModal(task);
         });
 
@@ -146,8 +152,6 @@ function refreshTasksUI() {
 //Function 4
 // Bug:camelcase was not used for the forEach array method
 //they did not use btn.classList.add(‘active’) for adding classes
-//The second bug is DOM-related since we want to add and remove classes theissue here is the fact that the .classList property is not used along with add or remove giving us btn.classList.add(‘active’) as the correct implementation
-
 function styleActiveBoard(boardName) {
   document.querySelectorAll(".board-btn").forEach((btn) => {
     if (btn.textContent === boardName) {
@@ -192,11 +196,12 @@ function setupEventListeners() {
   cancelEditBtn.addEventListener("click", () =>
     toggleModal(false, elements.editTaskModal)
   );
+
   // Cancel adding new task event listener
   const cancelAddTaskBtn = document.getElementById("cancel-add-task-btn");
   cancelAddTaskBtn.addEventListener("click", () => {
     toggleModal(false);
-    elements.filterDiv.style.display = "none";
+    elements.filterDiv.style.display = "none"; // Also hide the filter overlay
   });
 
   // Clicking outside the modal to close it
@@ -212,6 +217,7 @@ function setupEventListeners() {
   // Theme switch event listener
   elements.themeSwitch.addEventListener("change", toggleTheme);
 
+  // Show Add New Task Modal event listener
   elements.createNewTaskBtn.addEventListener("click", () => {
     toggleModal(true);
     elements.filterDiv.style.display = "block"; // Also show the filter overlay
@@ -262,14 +268,13 @@ function addTask(event) {
   }
 }
 //Function 9
-//The second function is the toggleSidebar function.and I completed the function by using an if statement to toggle the display property of the sidebar either to a flex display or none and this is also done for the showSideBarBtn which toggles the sidebar using a click event listener
 function toggleSidebar(show) {
   if (show) {
     // console.log("show sidebar button clicked");
-    elements.sideBar.style.display = "flex"; 
+    elements.sideBar.style.display = "flex"; // Display the sidebar
     elements.showSideBarBtn.style.display = "none";
   } else {
-    elements.sideBar.style.display = "none"; 
+    elements.sideBar.style.display = "none"; // Change "now" to "none"
     elements.showSideBarBtn.style.display = "block";
   }
 }
@@ -294,8 +299,6 @@ function toggleTheme() {
 //Function 11
 function openEditTaskModal(task) {
   // Set task details in modal inputs
-  //The fourth function is the editTaskModal function and I completed it by updating the inputs of the modal by assigning them to the properties of our task which is a parameter for this function
-
   const titleInput = document.getElementById("edit-task-title-input");
   const descInput = document.getElementById("edit-task-desc-input");
   const statusSelect = document.getElementById("edit-select-status");
@@ -308,7 +311,6 @@ function openEditTaskModal(task) {
   // Call saveTaskChanges upon click of Save Changes button
   const saveTaskChangesBtn = document.getElementById("save-task-changes-btn");
   const deleteTaskBtn = document.getElementById("delete-task-btn");
- // To finish the function off I added two event listeners for the saveTaskchanges and the deleteTaskbutton and I used helper function saveTaskChanges and deleteTask functions and we also use the toggleModal function to toggle the ediTtask modal.
 
   saveTaskChangesBtn.addEventListener("click", () => {
     saveTaskChanges(task.id);
@@ -343,7 +345,6 @@ function saveTaskChanges(taskId) {
     description: descInput.value,
     status: statusSelect.value,
   };
- //Call exported function to update elements on UI.
 
   // Update task using a hlper functoin
   patchTask(taskId, updatedTask);
