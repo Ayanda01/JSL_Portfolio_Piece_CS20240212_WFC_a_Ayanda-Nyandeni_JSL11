@@ -2,10 +2,6 @@
 import {getTasks,createNewTask,patchTask,putTask,deleteTask} from "./utils/taskFunctions.js";
 import { initialData } from "./initialData.js";
 
-/*************************************************************************************************************************************************
- * FIX BUGS!!!
- * **********************************************************************************************************************************************/
-
 // Function checks if local storage already has data, if not it loads initialData to localStorage
 //Function 1
 function initializeData() {
@@ -19,7 +15,7 @@ function initializeData() {
 
 // TASK: Get elements from the DOM
 const elements = {
-  // Navigation Sidebar elements
+  // elements
   sideBar: document.querySelector(".side-bar"),
   logo: document.getElementById("logo"),
   boardsNavLinks: document.getElementById("boards-nav-links-div"),
@@ -28,20 +24,14 @@ const elements = {
   lightThemeIcon: document.getElementById("icon-light"),
   hideSideBarBtn: document.getElementById("hide-side-bar-btn"),
   showSideBarBtn: document.getElementById("show-side-bar-btn"),
-
-  // Header
   headerBoardName: document.getElementById("header-board-name"),
   addNewTaskBtn: document.getElementById("add-new-task-btn"),
   editBoardBtn: document.getElementById("edit-board-btn"),
-
-  // Task Columns
   columnDivs: document.querySelectorAll(".column-div"),
   todoColumn: document.querySelector('.column-div[data-status="todo"]'),
   doingColumn: document.querySelector('.column-div[data-status="doing"]'),
   doneColumn: document.querySelector('.column-div[data-status="done"]'),
   filterDiv: document.getElementById("filterDiv"),
-
-  // New Task Modal
   titleInput: document.getElementById("title-input"),
   descInput: document.getElementById("desc-input"),
   selectStatus: document.getElementById("select-status"),
@@ -49,8 +39,6 @@ const elements = {
   cancelAddTaskBtn: document.getElementById("cancel-add-task-btn"),
   newTaskModal: document.getElementById("new-task-modal-window"),
   modalWindow: document.getElementById("new-task-modal-window"),
-
-  // Edit Task Modal
   editTaskModal: document.querySelector(".edit-task-modal-window"),
   editTaskTitleInput: document.getElementById("edit-task-title-input"),
   editTaskDescInput: document.getElementById("edit-task-desc-input"),
@@ -58,8 +46,6 @@ const elements = {
   saveTaskChangesBtn: document.getElementById("save-task-changes-btn"),
   cancelEditBtn: document.getElementById("cancel-edit-btn"),
   deleteTaskBtn: document.getElementById("delete-task-btn"),
-
-  // Filter
   filterDiv: document.getElementById("filterDiv"),
 };
 
@@ -109,9 +95,8 @@ function displayBoards(boards) {
 //the last bug was the fact that they used click() instead of click for eventlistener
 function filterAndDisplayTasksByBoard(boardName) {
   const tasks = getTasks(); // Fetch tasks from a simulated local storage function
-  const filteredTasks = tasks.filter((task) => task.board === boardName); // Use strict equality operator '===' instead of assignment '='
+  const filteredTasks = tasks.filter((task) => task.board === boardName); // Used strict equality operator '===' instead of assignment '='
 
-  // Ensure the column titles are set outside of this function or correctly initialized before this function runs
 
   elements.columnDivs.forEach((column) => {
     const status = column.getAttribute("data-status");
@@ -191,39 +176,33 @@ function addTaskToUI(task) {
 
 //Function 6
 function setupEventListeners() {
-  // Cancel editing task event listener
+  
   const cancelEditBtn = document.getElementById("cancel-edit-btn");
   cancelEditBtn.addEventListener("click", () =>
     toggleModal(false, elements.editTaskModal)
   );
 
-  // Cancel adding new task event listener
   const cancelAddTaskBtn = document.getElementById("cancel-add-task-btn");
   cancelAddTaskBtn.addEventListener("click", () => {
     toggleModal(false);
-    elements.filterDiv.style.display = "none"; // Also hide the filter overlay
+    elements.filterDiv.style.display = "none"; 
   });
 
   // Clicking outside the modal to close it
   elements.filterDiv.addEventListener("click", () => {
     toggleModal(false);
-    elements.filterDiv.style.display = "none"; // Also hide the filter overlay
+    elements.filterDiv.style.display = "none"; 
   });
 
   // Show sidebar event listener
   elements.hideSideBarBtn.addEventListener("click", () => toggleSidebar(false));
   elements.showSideBarBtn.addEventListener("click", () => toggleSidebar(true));
-
-  // Theme switch event listener
   elements.themeSwitch.addEventListener("change", toggleTheme);
-
-  // Show Add New Task Modal event listener
   elements.createNewTaskBtn.addEventListener("click", () => {
     toggleModal(true);
-    elements.filterDiv.style.display = "block"; // Also show the filter overlay
+    elements.filterDiv.style.display = "block"; 
   });
 
-  // Add new task form submission event listener
   elements.modalWindow.addEventListener("submit", (event) => {
     addTask(event);
   });
@@ -236,9 +215,7 @@ function toggleModal(show, modal = elements.modalWindow) {
   modal.style.display = show ? "block" : "none"; // Fixed ternary operator syntax
 }
 
-/*************************************************************************************************************************************************
- * COMPLETE FUNCTION CODE
- * **********************************************************************************************************************************************/
+
 //Function 8
 function addTask(event) {
   event.preventDefault();
@@ -270,11 +247,10 @@ function addTask(event) {
 //Function 9
 function toggleSidebar(show) {
   if (show) {
-    // console.log("show sidebar button clicked");
-    elements.sideBar.style.display = "flex"; // Display the sidebar
+    elements.sideBar.style.display = "flex"; // Display the sidebar as flex layout
     elements.showSideBarBtn.style.display = "none";
   } else {
-    elements.sideBar.style.display = "none"; // Change "now" to "none"
+    elements.sideBar.style.display = "none"; 
     elements.showSideBarBtn.style.display = "block";
   }
 }
@@ -292,13 +268,13 @@ function toggleTheme() {
   // Check if the current theme is light or dark
   const isLightTheme = body.classList.contains("light-theme");
 
-  // Store the theme preference in local storage
+  // Store the theme preference in local storage using ternary operator
   localStorage.setItem("theme", isLightTheme ? "light" : "dark");
 }
 
 //Function 11
 function openEditTaskModal(task) {
-  // Set task details in modal inputs
+
   const titleInput = document.getElementById("edit-task-title-input");
   const descInput = document.getElementById("edit-task-desc-input");
   const statusSelect = document.getElementById("edit-select-status");
@@ -314,7 +290,6 @@ function openEditTaskModal(task) {
 
   saveTaskChangesBtn.addEventListener("click", () => {
     saveTaskChanges(task.id);
-    // No need to reload the page, just refresh the UI
     refreshTasksUI();
     toggleModal(false, elements.editTaskModal);
   });
@@ -326,7 +301,6 @@ function openEditTaskModal(task) {
     refreshTasksUI();
     toggleModal(false, elements.editTaskModal);
   });
-
   toggleModal(true, elements.editTaskModal); // Show the edit task modal
 }
 
@@ -338,7 +312,6 @@ function saveTaskChanges(taskId) {
   const descInput = document.getElementById("edit-task-desc-input");
   const statusSelect = document.getElementById("edit-select-status");
 
-  // Create an object with the updated task details
   const updatedTask = {
     id: taskId,
     title: titleInput.value,
@@ -346,7 +319,7 @@ function saveTaskChanges(taskId) {
     status: statusSelect.value,
   };
 
-  // Update task using a hlper functoin
+  // Update task using an exported helper functoin
   patchTask(taskId, updatedTask);
 
   // Close the modal and refresh the UI to reflect the changes
@@ -357,7 +330,7 @@ function saveTaskChanges(taskId) {
 /*************************************************************************************************************************************************/
 
 document.addEventListener("DOMContentLoaded", function () {
-  init(); // init is called after the DOM is fully loaded
+  init(); 
 });
 
 function init() {
@@ -366,5 +339,5 @@ function init() {
   toggleSidebar(showSidebar);
   const isLightTheme = localStorage.getItem("light-theme") === "enabled";
   document.body.classList.toggle("light-theme", isLightTheme);
-  fetchAndDisplayBoardsAndTasks(); // Initial display of boards and tasks
+  fetchAndDisplayBoardsAndTasks(); 
 }
